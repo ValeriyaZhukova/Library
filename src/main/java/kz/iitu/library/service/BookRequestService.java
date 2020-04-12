@@ -55,7 +55,7 @@ public class BookRequestService {
     {
         BookRequest bookRequest = null;
         try {
-            bookRequest = bookRequestRepository.findBookRequestByBook_IdAndUserId(book.getId(), user.getId());
+            bookRequest = bookRequestRepository.findBookRequestByBook_IdAndUser_Id(book.getId(), user.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }

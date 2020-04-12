@@ -1,6 +1,5 @@
 package kz.iitu.library.service;
 
-import kz.iitu.library.config.SpringConfig;
 import kz.iitu.library.model.Book;
 import kz.iitu.library.model.Author;
 import kz.iitu.library.model.BookCategory;
@@ -93,6 +92,55 @@ public class BookService {
         System.out.println("Book " + book.toString() + "\nsuccessfully added");
     }
 
+    public void updateBookCategoryAndStatus(Long id)
+    {
+        Book book = bookRepository.findById(id).get();
+        BookCategory bookCategory;
+        BookStatus bookStatus = BookStatus.AVAILABLE;
+        String category;
+
+        System.out.println("Enter book category: ");
+        System.out.println("Prose, Drama, Poetry, Fiction or Nonfiction");
+        category = scanner.next();
+
+        if (category.equals("Prose"))
+        {
+            bookCategory = BookCategory.PROSE;
+        }
+
+        else if (category.equals("Drama"))
+        {
+            bookCategory = BookCategory.DRAMA;
+        }
+
+        else if (category.equals("Poetry"))
+        {
+            bookCategory = BookCategory.POETRY;
+        }
+
+        else if (category.equals("Fiction"))
+        {
+            bookCategory = BookCategory.FICTION;
+        }
+
+        else if (category.equals("Nonfiction"))
+        {
+            bookCategory = BookCategory.NONFICTION;
+        }
+
+        else
+        {
+            bookCategory = BookCategory.PROSE;
+        }
+
+        book.setCategory(bookCategory);
+        book.setStatus(bookStatus);
+
+        bookRepository.save(book);
+
+        System.out.println("Book " + book.toString() + " was updated successfully");
+    }
+
     public void listBooks()
     {
         books.clear();
@@ -113,34 +161,25 @@ public class BookService {
         return books;
     }
 
-    public List<Book> getBooksLi()
-    {
-        books.clear();
-        for (Book book: bookRepository.findAll())
-        {
-            books.add(book);
-            System.out.println(book.toString());
-        }
-        return books;
-    }
-
     public Book findBookByTitle()
     {
         String title;
         System.out.println("Enter book title");
         title = scanner.nextLine();
-        Book book = bookRepository.findBookByTitle(title);
+        Book book = bookRepository.findBookByTitleContaining(title);
         System.out.println(book.toString());
         return book;
     }
 
     public void findBookByAuthorSurname()
     {
-        String authorSurname;
+        String authorName, authorSurname;
+        System.out.println("Enter author name");
+        authorName = scanner.nextLine();
         System.out.println("Enter author surname");
         authorSurname = scanner.nextLine();
         books.clear();
-        books = bookRepository.findBookByAuthors_Surname(authorSurname);
+        books = bookRepository.findBookByAuthors_Name_AndAuthors_Surname(authorName, authorSurname);
         for (int i = 0; i < books.size(); i++)
         {
             System.out.println(books.get(i).toString());

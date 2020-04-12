@@ -1,10 +1,13 @@
 package kz.iitu.library.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "requests", "bookIssues"})
 public class Book {
 
     @Id
@@ -14,7 +17,9 @@ public class Book {
     private String title;
     private int publicationYear;
     private String language;
+    //@Enumerated(EnumType.STRING)
     private Enum status;
+    //@Enumerated(EnumType.STRING)
     private Enum category;
 
     public Book(){}

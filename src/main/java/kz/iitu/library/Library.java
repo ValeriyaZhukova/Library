@@ -12,8 +12,6 @@ import kz.iitu.library.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -56,11 +54,20 @@ public class Library {
         System.out.println("8 - Request book");
         System.out.println("9 - Issue book");
         System.out.println("10 - Show books by status");
+        System.out.println("11 - Update book category and status");
     }
 
     public void addNewBook()
     {
         bookService.addNewBook();
+    }
+
+    public void updateBook()
+    {
+        Long id;
+        System.out.println("Enter book id");
+        id = scanner.nextLong();
+        bookService.updateBookCategoryAndStatus(id);
     }
 
     public void listBooks()
@@ -242,6 +249,12 @@ public class Library {
                 case 10:
                 {
                     showBooksByStatus();
+                    break;
+                }
+
+                case 11:
+                {
+                    updateBook();
                     break;
                 }
             }
