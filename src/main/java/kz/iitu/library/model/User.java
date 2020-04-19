@@ -1,40 +1,28 @@
 package kz.iitu.library.model;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
+    private String username;
+    private String password;
 
-    private String name;
-    private String surname;
-
-    @Column(name = "role_id")
-    private Long roleId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    private UserRole role;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<BookRequest> requests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<BookIssue> bookIssues = new ArrayList<>();
-
-    public User(){}
-
-    public User(String name, String surname, UserRole role)
-    {
-        this.name = name;
-        this.surname = surname;
-        this.role = role;
-    }
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
+    )
+    private List<Role> roles;
 
     public Long getId() {
         return id;
@@ -44,53 +32,69 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public Long getRoleId() {
-        return roleId;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public List<BookRequest> getRequests() {
-        return requests;
-    }
-
-    public List<BookIssue> getBookIssues() {
-        return bookIssues;
+    public void setRoles(List<Role> roles)
+    {
+        this.roles = roles;
     }
 
     @Override
-    public String toString() {
+    public boolean isAccountNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities()
+    {
+        return roles;
+    }
+
+    @Override
+    public String toString()
+    {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

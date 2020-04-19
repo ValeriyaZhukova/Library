@@ -1,6 +1,7 @@
 package kz.iitu.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,15 +9,14 @@ import java.util.List;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "users"})
-public class UserRole {
+public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String role;
 
-    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles")
     private List<User> users = new ArrayList<>();
 
     public Long getId() {
@@ -35,15 +35,23 @@ public class UserRole {
         this.role = role;
     }
 
-    public List<User> getUsers() {
+    public List<User> getUsers()
+    {
         return users;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "UserRole{" +
                 "id=" + id +
                 ", role='" + role + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getAuthority()
+    {
+        return role;
     }
 }

@@ -1,10 +1,15 @@
 package kz.iitu.library.service;
 
 import kz.iitu.library.model.User;
-import kz.iitu.library.model.UserRole;
 import kz.iitu.library.repository.UserRepository;
 import kz.iitu.library.repository.UserRoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,80 +17,62 @@ import java.util.List;
 import java.util.Scanner;
 
 @Component
-public class UserService {
+public class UserService implements UserDetailsService {
 
-    Scanner scanner = new Scanner(System.in);
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    UserRoleRepository userRoleRepository;
-
-    List<User> users = new ArrayList<>();
-
-    public void addNewUser()
-    {
-        String name;
-        String surname;
-        String role;
-        UserRole userRole;
-
-        System.out.println("Enter user name");
-        name = scanner.next();
-
-        System.out.println("Enter user name");
-        surname = scanner.next();
-
-        System.out.println("Enter role");
-        role = scanner.next();
-
-        if (role.equals("Member"))
-        {
-            userRole = userRoleRepository.getOne(1L);
-        }
-
-        else if (role.equals("Librarian"))
-        {
-            userRole = userRoleRepository.getOne(2L);
-        }
-
-        else
-        {
-            userRole = null;
-        }
-
-        User user = new User(name, surname, userRole);
-
-        userRepository.save(user);
-
-        System.out.println(user.toString() + "\nsuccessfully saved");
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public void listUsers()
+    public User getUserByID(Long id)
     {
-        for (User u: userRepository.findAll())
-        {
-            users.add(u);
-            System.out.println(u.toString());
-        }
+        return userRepository.findById(id).get();
     }
 
-    public User findUserByNameAndSurname()
+    public User createUser(User user)
     {
-        String name;
-        String surname;
-
-        System.out.println("Enter user name");
-        name = scanner.next();
-
-        System.out.println("Enter user name");
-        surname = scanner.next();
-
-        User user = userRepository.findUserByNameAndSurname(name, surname);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.saveAndFlush(user);
         return user;
     }
 
+    public void updateUser(Long id, User user)
+    {
+        User userDb = userRepository.findById(id).orElse(null);
+
+        if (userDb != null)
+        {
+            userDb.setUsername(user.getUsername());
+            userDb.setPassword(user.getPassword());
+
+            userRepository.saveAndFlush(userDb);
+        }
+    }
+
+    public void deleteUser(Long id)
+    {
+        User user = new User();
+        user.setId(id);
+        userRepository.delete(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
+    {
+        User user = userRepository.findUserByUsername(username);
+
+        if (user == null)
+        {
+            throw new UsernameNotFoundException("User: " + username + " not found!");
+        }
+
+        return user;
+    }
 
 
 }
