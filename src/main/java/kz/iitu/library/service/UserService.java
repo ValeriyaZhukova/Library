@@ -1,5 +1,6 @@
 package kz.iitu.library.service;
 
+import kz.iitu.library.model.Role;
 import kz.iitu.library.model.User;
 import kz.iitu.library.repository.UserRepository;
 import kz.iitu.library.repository.UserRoleRepository;
@@ -25,6 +26,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserRoleRepository userRoleRepository;
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -36,7 +40,11 @@ public class UserService implements UserDetailsService {
 
     public User createUser(User user)
     {
+        List<Role> defaultRole = new ArrayList<>();
+        defaultRole.add(userRoleRepository.findByRole("USER"));
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(defaultRole);
         userRepository.saveAndFlush(user);
         return user;
     }
@@ -48,7 +56,7 @@ public class UserService implements UserDetailsService {
         if (userDb != null)
         {
             userDb.setUsername(user.getUsername());
-            userDb.setPassword(user.getPassword());
+            userDb.setPassword(passwordEncoder.encode(user.getPassword()));
 
             userRepository.saveAndFlush(userDb);
         }
@@ -73,6 +81,4 @@ public class UserService implements UserDetailsService {
 
         return user;
     }
-
-
 }

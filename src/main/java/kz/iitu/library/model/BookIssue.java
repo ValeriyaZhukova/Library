@@ -1,125 +1,55 @@
 package kz.iitu.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
+@Data
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "user"})
+@ApiModel(description = "Book issue model")
 public class BookIssue {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NonNull
     @Column(name = "user_id")
     private Long userId;
 
+    @NonNull
     @Column(name = "book_id")
     private Long bookId;
 
+    @NonNull
     private Date issueDate;
+    @NonNull
     private Date dueDate;
+    @NonNull
     private boolean isOverdue;
 
+    @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    @ApiModelProperty(value = "A book to be issued")
     private Book book;
 
+    @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ApiModelProperty(value = "A user who takes the book")
     private User user;
 
-    public BookIssue() {
-    }
 
-    public BookIssue(Long userId, Long bookId, Date issueDate, Date dueDate, boolean isOverdue, Book book, User user)
-    {
-        this.userId = userId;
-        this.bookId = bookId;
-        this.issueDate = issueDate;
-        this.dueDate = dueDate;
-        this.isOverdue = isOverdue;
-        this.book = book;
-        this.user = user;
-    }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
-
-    public Date getIssueDate() {
-        return issueDate;
-    }
-
-    public void setIssueDate(Date issueDate) {
-        this.issueDate = issueDate;
-    }
-
-    public Date getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Date dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public boolean isOverdue() {
-        return isOverdue;
-    }
-
-    public void setOverdue(boolean overdue) {
-        isOverdue = overdue;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    @Override
-    public String toString() {
-        return "BookIssue{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", bookId=" + bookId +
-                ", issueDate=" + issueDate +
-                ", dueDate=" + dueDate +
-                ", isOverdue=" + isOverdue +
-                ", book=" + book +
-                ", user=" + user +
-                '}';
-    }
 }

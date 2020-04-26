@@ -1,5 +1,8 @@
 package kz.iitu.library.model;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,7 +10,9 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
 
+@Data
 @Entity
+@ApiModel(description = "User model")
 public class User implements UserDetails {
 
     @Id
@@ -22,40 +27,8 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
     )
+    @ApiModelProperty(value = "List of user roles")
     private List<Role> roles;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles)
-    {
-        this.roles = roles;
-    }
 
     @Override
     public boolean isAccountNonExpired()
@@ -87,14 +60,4 @@ public class User implements UserDetails {
         return roles;
     }
 
-    @Override
-    public String toString()
-    {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", roles=" + roles +
-                '}';
-    }
 }

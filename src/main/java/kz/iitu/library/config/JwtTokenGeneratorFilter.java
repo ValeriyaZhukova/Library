@@ -30,8 +30,7 @@ public class JwtTokenGeneratorFilter extends UsernamePasswordAuthenticationFilte
         this.authManager = authManager;
 
         // By default, UsernamePasswordAuthenticationFilter listens to "/login" path.
-        // In our case, we use "/auth". So, we need to override the defaults.
-        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/auth/**", "POST"));
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/users/login", "POST"));
     }
 
     @Override

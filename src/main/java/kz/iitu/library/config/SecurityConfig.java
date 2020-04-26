@@ -17,16 +17,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(HttpSecurity http) throws Exception
+    {
         http
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/users/**").permitAll()
-                .antMatchers("/users/auth/**").permitAll()
+                .antMatchers("/users/find/**").permitAll()
+                .antMatchers("/users/login").permitAll()
                 .antMatchers("/users/register/**").permitAll()
                 .antMatchers("/users/create").hasAuthority("ADMIN")
                 .antMatchers("/users/update/**").hasAuthority("ADMIN")
                 .antMatchers("/users/delete/**").hasAuthority("ADMIN")
+                .antMatchers("/books/**").permitAll()
+                .antMatchers(
+                        "/v2/api-docs",
+                        "/swagger-resources/**",
+                        "/swagger-ui.html",
+                        "/webjars/**")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtTokenGeneratorFilter(authenticationManager()))

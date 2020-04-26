@@ -1,13 +1,18 @@
 package kz.iitu.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "books"})
+@ApiModel(description = "Book genre")
 public class Genre {
 
     @Id
@@ -16,34 +21,7 @@ public class Genre {
     private String genre;
 
     @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
+    @ApiModelProperty(value = "List of books of a particular genre")
     private List<Book> books = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    @Override
-    public String toString()
-    {
-        return "Genre{" +
-                "id=" + id +
-                ", genre='" + genre + '\'' +
-                '}';
-    }
 }

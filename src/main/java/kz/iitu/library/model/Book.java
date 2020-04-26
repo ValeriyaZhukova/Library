@@ -1,38 +1,39 @@
 package kz.iitu.library.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@RequiredArgsConstructor
+@NoArgsConstructor
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "requests", "bookIssues"})
+@ApiModel(description="Book model")
 public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NonNull
     private String title;
+    @NonNull
     private int publicationYear;
+    @NonNull
     private String language;
-    //@Enumerated(EnumType.STRING)
+    @NonNull
+    @ApiModelProperty(dataType = "string", value = "Book status", allowableValues = "AVAILABLE, REQUESTED,  ISSUED, OVERDUE")
     private Enum status;
-    //@Enumerated(EnumType.STRING)
+    @NonNull
+    @ApiModelProperty(dataType = "string", value = "Book type", allowableValues = "PROSE, DRAMA, POETRY, FICTION, NONFICTION")
     private Enum category;
 
-    public Book(){}
-
-    public Book(String title, int publicationYear, String language, Enum status, Enum category)
-    {
-        this.title = title;
-        this.publicationYear = publicationYear;
-        this.language = language;
-        this.status = status;
-        this.category = category;
-    }
-
+    @ApiModelProperty(value = "List of book genres")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_genres",
             joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")},
@@ -40,6 +41,7 @@ public class Book {
     )
     private List<Genre> genres = new ArrayList<>();
 
+    @ApiModelProperty(value = "List of book authors")
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "book_authors",
             joinColumns = {@JoinColumn(name = "book_id", referencedColumnName = "id")},
@@ -47,111 +49,12 @@ public class Book {
     )
     private List<Author> authors = new ArrayList<>();
 
+    @ApiModelProperty(value = "List of book requests")
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private List<BookRequest> requests = new ArrayList<>();
 
+    @ApiModelProperty(value = "List of book issues")
     @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
     private List<BookIssue> bookIssues = new ArrayList<>();
 
-    public Long getId()
-    {
-        return id;
-    }
-
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
-
-    public int getPublicationYear()
-    {
-        return publicationYear;
-    }
-
-    public void setPublicationYear(int publicationYear)
-    {
-        this.publicationYear = publicationYear;
-    }
-
-    public String getLanguage()
-    {
-        return language;
-    }
-
-    public void setLanguage(String language)
-    {
-        this.language = language;
-    }
-
-    public Enum getStatus()
-    {
-        return status;
-    }
-
-    public void setStatus(Enum status)
-    {
-        this.status = status;
-    }
-
-    public Enum getCategory()
-    {
-        return category;
-    }
-
-    public void setCategory(Enum category)
-    {
-        this.category = category;
-    }
-
-    public List<Genre> getGenres()
-    {
-        return genres;
-    }
-
-    public void setGenres(List<Genre> genres)
-    {
-        this.genres = genres;
-    }
-
-    public List<Author> getAuthors()
-    {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors)
-    {
-        this.authors = authors;
-    }
-
-    public List<BookRequest> getRequests() {
-        return requests;
-    }
-
-    public List<BookIssue> getBookIssues() {
-        return bookIssues;
-    }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", publicationYear=" + publicationYear +
-                ", language='" + language + '\'' +
-                ", status=" + status +
-                ", category=" + category +
-                ", genres=" + genres.toString() +
-                ", authors=" + authors.toString() +
-                '}';
-    }
 }

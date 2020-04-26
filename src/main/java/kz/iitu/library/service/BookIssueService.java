@@ -67,6 +67,4 @@ public class BookIssueService {
         }
         return bookIssueList;
     }
-
-
 }
